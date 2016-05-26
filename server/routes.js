@@ -9,6 +9,8 @@ import path from 'path';
 
 export default function(app) {
   // Insert routes below
+  app.use('/api/sunderers', require('./api/sunderer'));
+  app.use('/api/cortiums', require('./api/cortium'));
   app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
 

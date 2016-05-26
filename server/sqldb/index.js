@@ -14,6 +14,8 @@ var db = {
 };
 
 // Insert models below
+db.Sunderer = db.sequelize.import('../api/sunderer/sunderer.model');
+db.Cortium = db.sequelize.import('../api/cortium/cortium.model');
 db.Thing = db.sequelize.import('../api/thing/thing.model');
 db.User = db.sequelize.import('../api/user/user.model');
 

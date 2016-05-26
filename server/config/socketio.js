@@ -17,6 +17,8 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/sunderer/sunderer.socket').register(socket);
+  require('../api/cortium/cortium.socket').register(socket);
   require('../api/thing/thing.socket').register(socket);
 
 }
