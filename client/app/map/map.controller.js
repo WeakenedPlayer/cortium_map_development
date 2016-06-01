@@ -67,14 +67,28 @@ app.directive('ps2mapRoot', function(){
 app.directive('ps2mapMarker', function(){
 	return {
 		require: '^^ps2mapRoot',
-		restrict : 'E',
-		template:"<div></div>",
+		restrict: 'E',
+		scope: {
+			lat: "@",
+			lng: "@",
+		},
 	    link: function( scope, element, attr, ctrl) {
-			console.log("map marker post");
-			scope.marker = L.marker( [-10,10] );
+			// console.log("map marker post");
+			scope.marker = L.marker( [ scope.lat, scope.lng ], { draggable: true } );
 			ctrl.addMarker( scope.marker );
+			
+			scope.marker.on('move', function(evt){
+				// 課題 : 通知する手段がない。インターフェースを作るべき?
+				console.log(evt);
+				this.lat = evt.latlng.lat;
+				this.lng = evt.latlng.lng;
+			});
 	    },
 	};
+});
+
+app.controller('testCtrl', function(){
+	this.markers = [ { lat: -10, lng: 10 }, { lat: -30, lng: 20}, { lat: -50, lng: 50} ];
 });
 
 })();

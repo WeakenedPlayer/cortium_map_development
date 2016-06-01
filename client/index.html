@@ -31,8 +31,14 @@
 
     <!-- Add your site or application content here -->
     <navbar></navbar>
+</div>
     <ps2map-root>
-    <ps2map-marker>
+		<div ng-controller="testCtrl as ctrl">
+			<ng-repeat ng-repeat="marker in ctrl.markers">
+			<ps2map-marker lat="{{marker.lat}}", lng="{{marker.lng}}">
+			<p>{{marker.lat}},{{marker.lng}}</p>
+			</ng-repeat>
+		</div>
     </ps2map-root>
     <div ui-view=""></div>
     <footer></footer>
