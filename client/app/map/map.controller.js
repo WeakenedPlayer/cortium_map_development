@@ -15,7 +15,14 @@ angular.module('map2App')
   });
 
 var app = angular.module('map2App');
-app.directive('mapRoot', function(){
+
+app.constant('ps2map.constant', {
+	tileUrlTemplate: 'https://raw.githubusercontent.com/WeakenedPlayer/resource/master/map/{c}/{z}/{y}/{x}.jpg',
+	continentUrl: [ 'indar', 'amerish', 'esamir', 'hossin' ],
+});
+
+
+app.directive('ps2mapRoot', function(){
 	return {
 		restrict : 'E',
 		transclude: true,
@@ -24,43 +31,52 @@ app.directive('mapRoot', function(){
 		bindToController: true,
 		controllerAs: 'mapRootCtrl',
 		controller: [ '$scope', function( $scope ){
-			// http://qiita.com/armorik83/items/38fe685cc76163c7e8ce 
-			// Controllerが先に実行されるので、地図の操作はすぐには行えない
-			this.markers = [];
 			this.addMarker = function( marker ){
-				this.markers.push( marker );
+				marker.addTo( $scope.map );
 			};
 		}],
-
-		link: function( scope, element, attr ){
-			scope.map = L.map( element[0].children[0], { crs: L.CRS.Simple } );
-			scope.tile = L.tileLayer( 'https://raw.githubusercontent.com/WeakenedPlayer/resource/master/map/indar/{z}/{y}/{x}.jpg', {
-				tileSize: 256,
-				continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
-				attributionControl: false,
-				attribution: 'Indar',
-				zoomReverse: true,
-				minZoom: 0,
-				maxZoom: 4,
-				noWrap: true,
-		    });
-	    	scope.tile.addTo( scope.map );
-	    	scope.map.fitBounds([ [0, 0], [0, 512], [-512, 512], [-512, 0] ]);
+	    compile: function compile( element, attr, transclude) {
+			return {
+				pre: function preLink( scope, element, attr, controller) {
+					// 子要素のlinkが行われる前にmapを用意しておき、子要素からマーカの追加を行うため、preを使っている
+					// http://qiita.com/armorik83/items/38fe685cc76163c7e8ce 
+					// https://docs.angularjs.org/api/ng/service/$compile
+					// console.log("map root pre");
+					scope.map = L.map( element[0].children[0], { crs: L.CRS.Simple } );
+					scope.tile = L.tileLayer( 'https://raw.githubusercontent.com/WeakenedPlayer/resource/master/map/indar/{z}/{y}/{x}.jpg', {
+						tileSize: 256,
+						continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
+						attributionControl: false,
+						attribution: 'test',
+						zoomReverse: true,
+						minZoom: 0,
+						maxZoom: 4,
+						noWrap: true,
+					});
+			    	scope.tile.addTo( scope.map );
+			    	scope.map.fitBounds([ [0, 0], [0, 512], [-512, 512], [-512, 0] ]);
+				},
+				post: function postLink( scope, element, attr, controller) {
+					// console.log("map root post");
+				},
+			};
 	    },
 	};
 });
-app.directive('mapMarker', function(){
+
+app.directive('ps2mapMarker', function(){
 	return {
-		require: '^^mapRoot',
+		require: '^^ps2mapRoot',
 		restrict : 'E',
 		template:"<div></div>",
 	    link: function( scope, element, attr, ctrl) {
-	    	scope.marker = L.marker([-10,10]); 
-			// Controllerが先に実行されるので、まだ地図ができていない(DOM操作がまだ)
-	    	ctrl.addMarker( scope.marker );
+			console.log("map marker post");
+			scope.marker = L.marker( [-10,10] );
+			ctrl.addMarker( scope.marker );
 	    },
 	};
 });
+
 })();
 
 
