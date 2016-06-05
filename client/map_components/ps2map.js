@@ -1,5 +1,6 @@
 'use strict';
 
+(function() {
 var module = angular.module('ps2map',[]);
 
 //directives
@@ -7,10 +8,10 @@ module.directive('mpMap', function() {
 	return {
 		restrict: 'E',
 		transclude: true,
-		template: '<div style="width:100vw; height:100vh; background:#AABBCC;"><ng-transclude></div>',
-		scope: {},
-	    bindToController: true,
-	    controllerAs: '$mapCtrl',
+		template: '<style>.leaflet-container{ background: #051111;}</style><ng-transclude>',
+		scope: {
+			onClick: '&',
+		},
 		controller: ['$scope', function($scope) {
 			// マーカ等の追加
 			this.addLayer = function(layer) {
@@ -28,15 +29,20 @@ module.directive('mpMap', function() {
 					console.log('map pre link');
 					// 子要素のlinkが行われる前にmapを用意しておき、子要素からマーカの追加を行う
 					// https://docs.angularjs.org/api/ng/service/$compile
-					scope.map = L.map(elem[0].children[0], {
+					scope.map = L.map(elem[0].parentNode , {
 						crs: L.CRS.Simple,
 					});
-			          scope.map.fitBounds([
-			                               [0, 0],
-			                               [0, 512],
-			                               [-512, 512],
-			                               [-512, 0]
-			                             ]);
+					scope.map.on('click', function(evt) {
+						if( scope.onClick ){
+							scope.onClick( { 'event': evt } );
+						}
+					});
+					scope.map.fitBounds([
+											[0, 0],
+											[0, 512],
+											[-512, 512],
+											[-512, 0]
+										]);
 				},
 				post: function postLink(scope, element, attr, controller) {
 					// なし
@@ -109,18 +115,8 @@ module.directive('mpMarker', function() {
 			});
 		},
 	};
-		});
+});
 
-angular.module('map2App').controller('testController', ['$scope', function($scope){
-	this.markers = [ { lat: -10, lng: 10 }, { lat: -30, lng: 20}, { lat: -50, lng: 50} ];
-	this.onclick = function( evt ){
-		console.log(evt);
-	}
-	this.onmove = function( marker, evt ){
-		marker.lat = evt.latlng.lat;
-		marker.lng = evt.latlng.lng;
-		$scope.$apply();
-	}
-}]);
+})();
 
 

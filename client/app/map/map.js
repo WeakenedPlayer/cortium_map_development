@@ -5,6 +5,6 @@ angular.module('map2App')
     $stateProvider
       .state('map', {
         url: '/map',
-        template: '<map></map>'
+        template: '<map class="container-full"></map>'
       });
   });

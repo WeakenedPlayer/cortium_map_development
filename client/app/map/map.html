@@ -1,1 +1,14 @@
-<leaflets></leaflets>
+<div class="container-full " ng-controller="testController as ctrl">
+<div class="col-md-2 max-height">
+	<button class="btn btn-default" type="submit">Button</button>
+	<input class="btn btn-default" type="button" value="Input">
+	<input class="btn btn-default" type="submit" value="Submit">
+</div>
+	<div class="col-md-10 max-height">
+		<mp-map on-click="ctrl.onclick(event)">
+			<mp-tile></mp-tile>
+			<mp-marker ng-repeat="marker in ctrl.markers" lat="marker.lat" lng="marker.lng" on-click="ctrl.onclick(event)" on-move="ctrl.onmove(marker, event)">
+		</mp-map>
+	</div>
+</div>
+	

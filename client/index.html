@@ -30,19 +30,9 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <navbar></navbar>
-</div>
-	<div ng-controller="testController as ctrl">
-	<p>
-		<span ng-repeat="marker in ctrl.markers">({{marker.lat}}, {{marker.lng}})</span>
-	</p>
-    <mp-map>
-    	<mp-tile></mp-tile>
-    	<mp-marker ng-repeat="marker in ctrl.markers" lat="marker.lat" lng="marker.lng" on-click="ctrl.onclick(event)" on-move="ctrl.onmove(marker, event)">
-    </mp-map>
-    </div>
-    <div ui-view=""></div>
-    <footer></footer>
+    <!--<navbar></navbar>-->
+    <div ui-view="" class="container-full"></div>
+    <!--<footer></footer>-->
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
     <script>
