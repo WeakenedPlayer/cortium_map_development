@@ -117,6 +117,26 @@ module.directive('mpMarker', function() {
 	};
 });
 
+//マーカ
+module.directive('mpPanel', function() {
+	return {
+		restrict: 'E',
+		scope: {
+		},
+		controllerAs: '$panelCtrl',
+		controller: function(){
+			this.onMapClick = function( event ){
+				console.log(event);
+			};
+			this.onMarkerClick = function( event ){
+				
+			};
+		},
+		link: function(scope, element, attr, ctrl) {
+		},
+	};
+});
+
 })();
 
 

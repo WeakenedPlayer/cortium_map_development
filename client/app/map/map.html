@@ -1,13 +1,15 @@
-<div class="container-full " ng-controller="testController as ctrl">
-<div class="col-md-2 max-height">
-	<button class="btn btn-default" type="submit">Button</button>
-	<input class="btn btn-default" type="button" value="Input">
-	<input class="btn btn-default" type="submit" value="Submit">
-</div>
+<div class="container-full">
+	<mp-panel>
+		<div class="col-md-2 max-height">
+			<button class="btn btn-default" type="submit">Button</button>
+			<input class="btn btn-default" type="button" value="Input">
+			<input class="btn btn-default" type="submit" value="Submit">
+		</div>
+	</mp-panel>
 	<div class="col-md-10 max-height">
-		<mp-map on-click="ctrl.onclick(event)">
+		<mp-map on-click="$mapCtrl.onClickMap(event)">
 			<mp-tile></mp-tile>
-			<mp-marker ng-repeat="marker in ctrl.markers" lat="marker.lat" lng="marker.lng" on-click="ctrl.onclick(event)" on-move="ctrl.onmove(marker, event)">
+			<mp-marker ng-repeat="marker in $mapCtrl.markers" lat="marker.lat" lng="marker.lng" on-click="$mapCtrl.onClickMarker(event)">
 		</mp-map>
 	</div>
 </div>
