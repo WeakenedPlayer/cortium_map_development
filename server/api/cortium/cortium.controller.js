@@ -79,6 +79,7 @@ export function show(req, res) {
 
 // Creates a new Cortium in the DB
 export function create(req, res) {
+	  console.log(req.body);
   return Cortium.create(req.body)
     .then(respondWithResult(res, 201))
     .catch(handleError(res));

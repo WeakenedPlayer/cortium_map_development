@@ -15,10 +15,12 @@ module.directive('mpMap', function() {
 		controller: ['$scope', function($scope) {
 			// マーカ等の追加
 			this.addLayer = function(layer) {
+				console.log('addLayer');
 				layer.addTo($scope.map);
 			};
 			// マーカ等の削除
 			this.removeLayer = function(layer) {
+				console.log('removeLayer');
 				$scope.map.removeLayer(layer);
 			};
 			console.log('map controller');
@@ -31,6 +33,7 @@ module.directive('mpMap', function() {
 					// https://docs.angularjs.org/api/ng/service/$compile
 					scope.map = L.map(elem[0].parentNode , {
 						crs: L.CRS.Simple,
+						attributionControl: false,
 					});
 					scope.map.on('click', function(evt) {
 						if( scope.onClick ){
@@ -39,9 +42,9 @@ module.directive('mpMap', function() {
 					});
 					scope.map.fitBounds([
 											[0, 0],
-											[0, 512],
-											[-512, 512],
-											[-512, 0]
+											[0, 256],
+											[-256, 256],
+											[-256, 0]
 										]);
 				},
 				post: function postLink(scope, element, attr, controller) {
@@ -60,19 +63,19 @@ module.directive('mpTile', function()  {
 		restrict: 'E',
 		transclude: true,
 		scope: {
+			urlTemplate: '&',
+			tileSize: '&',
 		},
 		controller: ['$scope', function($scope) {
 		}],
-		link: function(scope, elem, attr, ctrl) {
+		link: function( scope, elem, attr, ctrl) {
 			console.log('tile post link');
-			scope.tile = L.tileLayer('https://raw.githubusercontent.com/WeakenedPlayer/resource/master/map/indar/{z}/{y}/{x}.jpg', {
-				tileSize: 256,
+			scope.tile = L.tileLayer( scope.urlTemplate(), {
+				tileSize: scope.tileSize(),
 				continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
-				attributionControl: false,
-				attribution: 'test',
-				zoomReverse: true,
-				minZoom: 0,
-				maxZoom: 4,
+				minZoom: 1,
+				maxZoom: 11,
+				zoomOffset: 0,
 				noWrap: true,
 			});
 			ctrl.addLayer( scope.tile );
@@ -92,7 +95,8 @@ module.directive('mpMarker', function() {
 			onClick: "&",
 		},
 		link: function(scope, element, attr, ctrl) {
-			scope.marker = L.marker([scope.lat(), scope.lng()], {
+			// console.log('('+scope.lng()+', ' + scope.lng() +')');
+			scope.marker = L.marker( [ scope.lat(), scope.lng() ], {
 				draggable: true
 			});
 			ctrl.addLayer(scope.marker);
