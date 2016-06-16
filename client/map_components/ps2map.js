@@ -65,20 +65,37 @@ module.directive('mpTile', function()  {
 		scope: {
 			urlTemplate: '&',
 			tileSize: '&',
+			registerCallback: '&',
 		},
+		bindToController: true,
+		controllerAs: '$tileCtrl',
 		controller: ['$scope', function($scope) {
+			$scope.self = this;
+			var self = $scope.self;
+			//-------------------------------------------------------------------------------
+			self.rebuildTile = function(){
+				var self = $scope.self;
+				// remove existing tile layer from map
+				if( self.tile ){
+					this.map.removeLayer( self.tile );
+				}
+				self.tile = L.tileLayer( self.urlTemplate(), {
+					tileSize: self.tileSize(),
+					continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
+					minZoom: 1,
+					maxZoom: 11,
+					maxNativeZoom: 5,
+					noWrap: true,		
+				});
+				self.map.addLayer( this.tile );
+			};
 		}],
+		
 		link: function( scope, elem, attr, ctrl) {
+			var self = scope.self;
 			console.log('tile post link');
-			scope.tile = L.tileLayer( scope.urlTemplate(), {
-				tileSize: scope.tileSize(),
-				continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
-				minZoom: 1,
-				maxZoom: 11,
-				zoomOffset: 0,
-				noWrap: true,
-			});
-			ctrl.addLayer( scope.tile );
+			self.map = ctrl;
+			self.rebuildTile();
 		},
 	};
 });

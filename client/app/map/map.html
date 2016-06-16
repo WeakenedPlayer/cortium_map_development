@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿<!-- dash board -->
+﻿﻿﻿﻿﻿﻿﻿<!-- dash board -->
 <mp-panel>
 	<div class="col-md-2 container max-height">
 		<div class="max-height row">
@@ -6,6 +6,7 @@
 				<div class="panel-heading">マーカ登録</div>
 				<div class="panel-body">
 					<button class="btn btn-default" ng-click="$mapCtrl.update()">Update</button>
+					<select ng-model="selectedContinent" ng-options="continent.id as continent.name for continent in $mapCtrl.continents"></select>
 				</div>
 			</div>
 		</div>
@@ -13,8 +14,8 @@
 </mp-panel>
 <div class="col-md-10 max-height">
 	<mp-map on-click="$mapCtrl.onClickMap(event)">
-		<mp-tile url-template="$mapCtrl.urlTemplate" tile-size="256"></mp-tile>
-		<mp-marker ng-repeat="marker in cortiums" lat="marker.lat" lng="marker.lng">
+	<mp-tile url-template="$mapCtrl.urlTemplate" tile-size="256"  register-callback="$mapCtrl.tileCallback( callback )"></mp-tile>
+		<mp-marker ng-repeat="marker in $mapCtrl.cortiums" lat="marker.lat" lng="marker.lng">
 	</mp-map>
 </div>
 <!--
@@ -29,7 +30,7 @@ Cortium登録
 Sunderer
 
 リアルタイム情報
-
+>
 
 お気に入り登録
 
