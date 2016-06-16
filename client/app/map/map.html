@@ -6,7 +6,7 @@
 				<div class="panel-heading">マーカ登録</div>
 				<div class="panel-body">
 					<button class="btn btn-default" ng-click="$mapCtrl.update()">Update</button>
-					<select ng-model="selectedContinent" ng-options="continent.id as continent.name for continent in $mapCtrl.continents"></select>
+					<select ng-model="$mapCtrl.selectedContinent" ng-options="continent.id as continent.name for continent in $mapCtrl.continents" ng-change="$mapCtrl.changeContinent()"></select>
 				</div>
 			</div>
 		</div>
@@ -14,7 +14,7 @@
 </mp-panel>
 <div class="col-md-10 max-height">
 	<mp-map on-click="$mapCtrl.onClickMap(event)">
-	<mp-tile url-template="$mapCtrl.urlTemplate" tile-size="256"  register-callback="$mapCtrl.tileCallback( callback )"></mp-tile>
+	<mp-tile url-template="$mapCtrl.urlTemplate" tile-size="256"  register-api="$mapCtrl.registerTileApi( api )"></mp-tile>
 		<mp-marker ng-repeat="marker in $mapCtrl.cortiums" lat="marker.lat" lng="marker.lng">
 	</mp-map>
 </div>

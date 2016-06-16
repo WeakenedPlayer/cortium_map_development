@@ -65,37 +65,45 @@ module.directive('mpTile', function()  {
 		scope: {
 			urlTemplate: '&',
 			tileSize: '&',
-			registerCallback: '&',
+			rebuild: '&',
+			registerApi: '&',
 		},
 		bindToController: true,
-		controllerAs: '$tileCtrl',
+		controllerAs: 'tileCtrl',
+		//-----------------------------------------------------------------------------------------
 		controller: ['$scope', function($scope) {
 			$scope.self = this;
 			var self = $scope.self;
-			//-------------------------------------------------------------------------------
-			self.rebuildTile = function(){
-				var self = $scope.self;
-				// remove existing tile layer from map
-				if( self.tile ){
-					this.map.removeLayer( self.tile );
-				}
-				self.tile = L.tileLayer( self.urlTemplate(), {
-					tileSize: self.tileSize(),
-					continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
-					minZoom: 1,
-					maxZoom: 11,
-					maxNativeZoom: 5,
-					noWrap: true,		
-				});
-				self.map.addLayer( this.tile );
+			// rebuild tile layer with new parameter
+			self.api = {
+				rebuildTile : function(){
+					var self = $scope.self;
+					// remove existing tile layer from map
+					if( self.tile ){
+						self.mapCtrl.removeLayer( self.tile );
+					}
+					console.log(self.urlTemplate());
+					self.tile = L.tileLayer( self.urlTemplate(), {
+						tileSize: self.tileSize(),
+						continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
+						minZoom: 1,
+						maxZoom: 7,
+						maxNativeZoom: 5,
+						noWrap: true,		
+					});
+					self.mapCtrl.addLayer( self.tile );
+				},
 			};
+			
 		}],
-		
+		//-----------------------------------------------------------------------------------------
 		link: function( scope, elem, attr, ctrl) {
+			// console.log('tile post link');
 			var self = scope.self;
-			console.log('tile post link');
-			self.map = ctrl;
-			self.rebuildTile();
+			self.mapElement = elem;
+			self.mapCtrl = ctrl;
+			self.api.rebuildTile();
+			self.registerApi( { 'api': self.api } );
 		},
 	};
 });
