@@ -60,9 +60,20 @@ function handleError(res, statusCode) {
 
 // Gets a list of Cortiums
 export function index(req, res) {
-  return Cortium.findAll()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+	var continent = req.query.continent;
+	if( continent !== undefined ){
+		return Cortium.findAll({
+			where: {
+				continent: parseInt( continent ),
+			}
+		})
+		.then(respondWithResult(res))
+		.catch(handleError(res));
+	} else {
+		return Cortium.findAll()
+		.then(respondWithResult(res))
+		.catch(handleError(res));
+	}
 }
 
 // Gets a single Cortium from the DB

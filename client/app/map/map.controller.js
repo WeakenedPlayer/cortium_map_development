@@ -26,17 +26,21 @@ module.component('map', {
 
 		self.selectedCortium = undefined;
 		self.cortiums = [];
-		self.selectedContinentId = 1;
+		self.selectedContinentId = 0;
 		self.tileApi = undefined;
 		self.continents = mapConstant.continents;
 		self.urlTemplate = mapService.templateUrl( self.selectedContinentId );
 
 		self.update = function(){
-			coriumService.getCortiums().then( function( res ){
+			coriumService.getCortiums( self.selectedContinentId ).then( function( res ){
 				self.cortiums = [];
 				for( var i=0; i < res.data.length; i++ ){
 					self.cortiums.push( { lat: 256*res.data[i].lat, lng: 256*res.data[i].lng } );
 				}
+			}, function( res ){
+				// 見つからない場合
+				console.log("notfound");
+				self.cortiums = [];
 			});
 		};
 		
@@ -46,6 +50,7 @@ module.component('map', {
 		
 		self.changeContinent = function( continentId ){
 			self.selectedContinentId = continentId;
+			self.update();
 			self.urlTemplate = mapService.templateUrl( self.selectedContinentId );
 			self.tileApi.rebuildTile();
 		};
@@ -53,7 +58,6 @@ module.component('map', {
 		this.onClickMarker = function( event ){
 			};
 		this.onClickMap = function( event ){
-			console.log('test');
 			coriumService.putCortium( {
 				continent: self.selectedContinentId, 
 				lat: event.latlng.lat / 256,
@@ -71,8 +75,12 @@ module.service( 'coriumService', [ '$http', function($http) {
 	this.putCortium = function( cortium ) {
         return $http.post('/api/cortiums', cortium);
     };
-    this.getCortiums = function() {
-        return $http.get('/api/cortiums');
+    this.getCortiums = function( continentId ) {
+    	if( continentId !== undefined ){
+            return $http.get('/api/cortiums/?continent=' + continentId );    		
+    	} else {
+    		return $http.get('/api/cortiums');
+    	}
     };
     this.getCortium = function( id ) {
         return $http.get('/api/cortiums/' + id);
