@@ -1,16 +1,24 @@
-﻿﻿﻿﻿﻿﻿﻿<!-- dash board -->
+﻿﻿﻿﻿﻿﻿﻿﻿﻿<!-- dash board -->
 <mp-panel>
-	<div class="col-md-2 container max-height">
-		<div class="max-height row">
-			<div class="panel panel-primary">
-				<div class="panel-heading">マーカ登録</div>
-				<div class="panel-body">
-					<button class="btn btn-default" ng-click="$mapCtrl.update()">Update</button>
-					<select ng-model="$mapCtrl.selectedContinent" ng-options="continent.id as continent.name for continent in $mapCtrl.continents" ng-change="$mapCtrl.changeContinent()"></select>
+<div class="col-md-2 container max-height">
+	<div class="max-height row">
+		<div class="panel panel-primary" style="margin:0px;">
+			<div class="panel-heading">Continent</div>
+			<div class="panel-body">
+				<div class="list-group">
+				  <a href="#" ng-repeat="continent in $mapCtrl.continents" class="list-group-item" ng-class="{ active: ($mapCtrl.selectedContinentId===continent.id)}" ng-click="$mapCtrl.changeContinent(continent.id)">
+				  {{::continent.name}}</a>
 				</div>
 			</div>
 		</div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">マーカ登録</div>
+			<div class="panel-body">
+				<button class="btn btn-default" ng-click="$mapCtrl.update()">Update</button>
+			</div>
+		</div>
 	</div>
+</div>
 </mp-panel>
 <div class="col-md-10 max-height">
 	<mp-map on-click="$mapCtrl.onClickMap(event)">

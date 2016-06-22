@@ -77,7 +77,6 @@ module.directive('mpTile', function()  {
 			// rebuild tile layer with new parameter
 			self.api = {
 				rebuildTile : function(){
-					var self = $scope.self;
 					// remove existing tile layer from map
 					if( self.tile ){
 						self.mapCtrl.removeLayer( self.tile );
@@ -165,6 +164,8 @@ module.directive('mpPanel', function() {
 		},
 	};
 });
+
+
 
 })();
 
