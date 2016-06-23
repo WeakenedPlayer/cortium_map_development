@@ -118,28 +118,34 @@ module.directive('mpMarker', function() {
 			onMove: "&",
 			onClick: "&",
 		},
+		bindToController: true,
+		controllerAs: 'marker',
+		controller: [ '$scope' ,function( $scope ){
+			$scope.self = this;
+		} ],
 		link: function(scope, element, attr, ctrl) {
+			var self = scope.self;
 			// console.log('('+scope.lng()+', ' + scope.lng() +')');
-			scope.marker = L.marker( [ scope.lat(), scope.lng() ], {
+			self.marker = L.marker( [ self.lat(), self.lng() ], {
 				draggable: true
 			});
-			ctrl.addLayer(scope.marker);
+			ctrl.addLayer( self.marker );
 	
 			// leafletのイベント変数を利用可能
-			scope.marker.on('move', function(evt) {
-				if( scope.onMove ){
-					scope.onMove( { 'event': evt } );
+			self.marker.on('move', function(evt) {
+				if( self.onMove ){
+					self.onMove( { 'event': evt } );
 				}
 			});
 	
-			scope.marker.on('click', function(evt) {
-				if( scope.onClick ){
-					scope.onClick( { 'event': evt } );
+			self.marker.on('click', function(evt) {
+				if( self.onClick ){
+					self.onClick( { 'event': evt } );
 				}
 			});
 			
 			element.on('$destroy', function() {
-				ctrl.removeLayer(scope.marker);
+				ctrl.removeLayer(self.marker);
 			});
 		},
 	};
