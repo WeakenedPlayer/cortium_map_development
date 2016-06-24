@@ -39,7 +39,6 @@ module.component('map', {
 				}
 			}, function( res ){
 				// 見つからない場合
-				console.log("notfound");
 				self.cortiums = [];
 			});
 		};
@@ -69,9 +68,6 @@ module.component('map', {
 });
 
 module.service( 'coriumService', [ '$http', function($http) {
-	this.Cortium = function(){
-		return 
-	};
 	this.putCortium = function( cortium ) {
         return $http.post('/api/cortiums', cortium);
     };
