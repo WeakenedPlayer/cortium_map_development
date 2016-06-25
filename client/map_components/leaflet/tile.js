@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ps2map').directive('mpTile', function() {
+PS2MAP.directive('mpTile', function() {
 	return {
 	    require: '^^mpMap',
 		restrict: 'E',

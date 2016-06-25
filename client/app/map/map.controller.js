@@ -4,35 +4,22 @@
 
 var module = angular.module('map2App');
 
-module.constant('mapConstant', {
-	'urlBase': 'https://raw.githubusercontent.com/WeakenedPlayer/resource/master/map/',
-	'format' : '/{z}/{y}/{x}.jpg',
-	'continents': [ 
-		{ id: 0, url: 'indar', name: 'Indar' },
-		{ id: 1, url: 'amerish', name: 'Amerish'},
-		{ id: 2, url: 'esamir', name: 'Esamir'},
-		{ id: 3, url: 'hossin', name: 'Hossin'},
-   ],
-});
-
-
 module.component('map', {
 	templateUrl: 'app/map/map.html',
 	bindToController: true,
 	controllerAs: '$mapCtrl',
-	controller: ['$scope','mapConstant', 'mapService', 'coriumService',  function( $scope,mapConstant, mapService, coriumService ){
+	controller: ['$scope', 'mpConfig', 'mpCortiumService',  function( $scope, config, cortiumService){
 		$scope.self = this;
 		var self = $scope.self;
-
 		self.selectedCortium = undefined;
 		self.cortiums = [];
 		self.selectedContinentId = 0;
 		self.tileApi = undefined;
-		self.continents = mapConstant.continents;
-		self.urlTemplate = mapService.templateUrl( self.selectedContinentId );
-
+		self.continents = config.continents;
+		self.urlTemplate = config.templateUrl( self.selectedContinentId );
+		//-----------------------------------------------------------------------------------------
 		self.update = function(){
-			coriumService.getCortiums( self.selectedContinentId ).then( function( res ){
+			cortiumService.getCortiums( self.selectedContinentId ).then( function( res ){
 				self.cortiums = [];
 				for( var i=0; i < res.data.length; i++ ){
 					self.cortiums.push( { lat: 256*res.data[i].lat, lng: 256*res.data[i].lng } );
@@ -42,54 +29,32 @@ module.component('map', {
 				self.cortiums = [];
 			});
 		};
-		
-		self.registerTileApi = function( api ){
-			self.tileApi = api;
+		//-----------------------------------------------------------------------------------------
+		self.onClickMarker = function( event ){
 		};
-		
-		self.changeContinent = function( continentId ){
-			self.selectedContinentId = continentId;
-			self.update();
-			self.urlTemplate = mapService.templateUrl( self.selectedContinentId );
-			self.tileApi.rebuildTile();
-		};
-		
-		this.onClickMarker = function( event ){
-			};
-		this.onClickMap = function( event ){
-			coriumService.putCortium( {
+		//-----------------------------------------------------------------------------------------
+		self.onClickMap = function( event ){
+			cortiumService.putCortium( {
 				continent: self.selectedContinentId, 
 				lat: event.latlng.lat / 256,
 				lng: event.latlng.lng / 256,
 				grade: 1,
 			});
 		};
+		//-----------------------------------------------------------------------------------------
+		self.registerTileApi = function( api ){
+			self.tileApi = api;
+		};
+		//-----------------------------------------------------------------------------------------
+		self.changeContinent = function( continentId ){
+			self.selectedContinentId = continentId;
+			self.update();
+			self.urlTemplate = config.templateUrl( self.selectedContinentId );
+			self.tileApi.rebuildTile();
+		};
+		//-----------------------------------------------------------------------------------------
 	}],
 });
-
-module.service( 'coriumService', [ '$http', function($http) {
-	this.putCortium = function( cortium ) {
-        return $http.post('/api/cortiums', cortium);
-    };
-    this.getCortiums = function( continentId ) {
-    	if( continentId !== undefined ){
-            return $http.get('/api/cortiums/?continent=' + continentId );    		
-    	} else {
-    		return $http.get('/api/cortiums');
-    	}
-    };
-    this.getCortium = function( id ) {
-        return $http.get('/api/cortiums/' + id);
-    };
-}]);
-
-
-		
-module.service('mapService', [ 'mapConstant', function(mapConstant){
-	this.templateUrl = function( continentId ){
-		return mapConstant.urlBase + mapConstant.continents[ continentId ].url + mapConstant.format;
-	};
-}]);
 
 
 })();
