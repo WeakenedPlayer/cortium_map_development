@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ps2map').directive('mpMap', function() {
+PS2MAP.directive('mpMap', function() {
 	return {
 		restrict: 'E',
 		transclude: true,
