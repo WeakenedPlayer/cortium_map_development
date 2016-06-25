@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('map2App')
-  .config(function ($stateProvider) {
-    $stateProvider
-      .state('map', {
-        url: '/map',
-        template: '<map class="container-full"></map>'
-      });
-  });
+.config(function ($stateProvider) {
+	$stateProvider
+	.state('map', {
+		url: '/map',
+		template: '<map class="container-full"></map>'
+	});
+});

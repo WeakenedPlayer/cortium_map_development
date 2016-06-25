@@ -2,60 +2,70 @@
 
 (function(){
 
-var module = angular.module('map2App');
+class MapCtrl {
+	constructor( $scope, mpConfig, mpCortiumService){
+		MapCtrl.$inject = ['$scope', 'mpConfig', 'mpCortiumService'];
+		// DI
+		this.scope = $scope;
+		this.config = mpConfig;
+		this.cortiumService = mpCortiumService;
+		
+		// property
+		this.selectedCortium = undefined;
+		this.cortiums = [];
+		this.selectedContinentId = 0;
+		this.tileApi = undefined;
+		this.continents = this.config.continents;
+		this.urlTemplate = this.config.templateUrl( this.selectedContinentId );
+		
+		console.log('construct map ctrl');
+		console.log(this.onClickMap);
+	}
+	
+	update() {
+		this.cortiums = [];
+		this.cortiumService.getCortiums( this.selectedContinentId )
+		.then( ( res ) => {
+			for( var i=0; i < res.data.length; i++ ) {
+				this.cortiums.push( { lat: 256*res.data[i].lat, lng: 256*res.data[i].lng } );
+			}
+		}, ( res ) => {
+			// 見つからない場合
+		});
+	}
+	onClickMarker( event ) {
+	};
+	//-----------------------------------------------------------------------------------------
+	onClickMap( event ){
+		// console.log('map clicked');
+		this.cortiumService.putCortium( {
+			continent: this.selectedContinentId, 
+			lat: event.latlng.lat / 256,
+			lng: event.latlng.lng / 256,
+			grade: 1,
+		});
+	}
+	//-----------------------------------------------------------------------------------------
+	registerTileApi( api ){
+		this.tileApi = api;
+		// console.log('api registered');
+	}
+	//-----------------------------------------------------------------------------------------
+	changeContinent( continentId ){
+		this.selectedContinentId = continentId;
+		this.update();
+		this.urlTemplate = this.config.templateUrl( this.selectedContinentId );
+		this.tileApi.rebuildTile();
+	}
+	//-----------------------------------------------------------------------------------------
+}
 
-module.component('map', {
+angular.module('map2App')
+.component('map', {
 	templateUrl: 'app/map/map.html',
-	bindToController: true,
+	controller: MapCtrl,
 	controllerAs: '$mapCtrl',
-	controller: ['$scope', 'mpConfig', 'mpCortiumService',  function( $scope, config, cortiumService){
-		$scope.self = this;
-		var self = $scope.self;
-		self.selectedCortium = undefined;
-		self.cortiums = [];
-		self.selectedContinentId = 0;
-		self.tileApi = undefined;
-		self.continents = config.continents;
-		self.urlTemplate = config.templateUrl( self.selectedContinentId );
-		//-----------------------------------------------------------------------------------------
-		self.update = function(){
-			cortiumService.getCortiums( self.selectedContinentId ).then( function( res ){
-				self.cortiums = [];
-				for( var i=0; i < res.data.length; i++ ){
-					self.cortiums.push( { lat: 256*res.data[i].lat, lng: 256*res.data[i].lng } );
-				}
-			}, function( res ){
-				// 見つからない場合
-				self.cortiums = [];
-			});
-		};
-		//-----------------------------------------------------------------------------------------
-		self.onClickMarker = function( event ){
-		};
-		//-----------------------------------------------------------------------------------------
-		self.onClickMap = function( event ){
-			cortiumService.putCortium( {
-				continent: self.selectedContinentId, 
-				lat: event.latlng.lat / 256,
-				lng: event.latlng.lng / 256,
-				grade: 1,
-			});
-		};
-		//-----------------------------------------------------------------------------------------
-		self.registerTileApi = function( api ){
-			self.tileApi = api;
-		};
-		//-----------------------------------------------------------------------------------------
-		self.changeContinent = function( continentId ){
-			self.selectedContinentId = continentId;
-			self.update();
-			self.urlTemplate = config.templateUrl( self.selectedContinentId );
-			self.tileApi.rebuildTile();
-		};
-		//-----------------------------------------------------------------------------------------
-	}],
 });
-
 
 })();
 

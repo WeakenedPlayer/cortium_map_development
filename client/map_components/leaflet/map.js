@@ -8,10 +8,13 @@ PS2MAP.directive('mpMap', function() {
 		scope: {
 			onClick: '&',
 		},
+		bindToController: true,
+		controllerAs: 'mpMapCtrl',
 		controller: ['$scope', function($scope) {
 			console.log('map controller');
 			$scope.self = this;
 			var self = $scope.self;
+			console.log(self.onClick);
 			// マーカ等の追加
 			self.addLayer = function( layer ) {
 				layer.addTo( self.map );
@@ -34,6 +37,7 @@ PS2MAP.directive('mpMap', function() {
 						attributionControl: false,
 					});
 					self.map.on( 'click', function( evt ) {
+						console.log(self.onClick);
 						if( self.onClick ){
 							self.onClick( { 'event': evt } );
 						}
@@ -46,7 +50,7 @@ PS2MAP.directive('mpMap', function() {
 										]);
 				},
 				post: function postLink() {
-					console.log('map post link');
+					// console.log('map post link');
 				},
 			};
 		},

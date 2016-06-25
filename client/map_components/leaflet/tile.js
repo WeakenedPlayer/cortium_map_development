@@ -15,7 +15,7 @@ PS2MAP.directive('mpTile', function() {
 		controllerAs: 'tileCtrl',
 		//-----------------------------------------------------------------------------------------
 		controller: ['$scope', function($scope) {
-			console.log('tile controller');
+			// console.log('tile controller');
 			$scope.self = this;
 			var self = $scope.self;
 			// rebuild tile layer with new parameter
@@ -46,6 +46,7 @@ PS2MAP.directive('mpTile', function() {
 			self.mapElement = elem;
 			self.mapCtrl = ctrl;
 			self.api.rebuildTile();
+			console.log('api register');
 			self.registerApi( { 'api': self.api } );
 		},
 	};
