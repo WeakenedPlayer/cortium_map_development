@@ -17,6 +17,7 @@ PS2MAP.directive('mpMap', function() {
 			console.log(self.onClick);
 			// マーカ等の追加
 			self.addLayer = function( layer ) {
+				console.log(layer);
 				layer.addTo( self.map );
 			};
 			// マーカ等の削除

@@ -4,8 +4,9 @@
 
 class MapCtrl {
 	constructor( $scope, mpConfig, mpCortiumService){
-		MapCtrl.$inject = ['$scope', 'mpConfig', 'mpCortiumService'];
+		// console.log('MapCtrl class constructor');
 		// DI
+		MapCtrl.$inject = ['$scope', 'mpConfig', 'mpCortiumService'];
 		this.scope = $scope;
 		this.config = mpConfig;
 		this.cortiumService = mpCortiumService;
@@ -16,10 +17,7 @@ class MapCtrl {
 		this.selectedContinentId = 0;
 		this.tileApi = undefined;
 		this.continents = this.config.continents;
-		this.urlTemplate = this.config.templateUrl( this.selectedContinentId );
-		
-		console.log('construct map ctrl');
-		console.log(this.onClickMap);
+		this.templateUrl = this.config.templateUrl( this.selectedContinentId );
 	}
 	
 	update() {
@@ -27,6 +25,7 @@ class MapCtrl {
 		this.cortiumService.getCortiums( this.selectedContinentId )
 		.then( ( res ) => {
 			for( var i=0; i < res.data.length; i++ ) {
+				// 暫定
 				this.cortiums.push( { lat: 256*res.data[i].lat, lng: 256*res.data[i].lng } );
 			}
 		}, ( res ) => {
@@ -38,6 +37,7 @@ class MapCtrl {
 	//-----------------------------------------------------------------------------------------
 	onClickMap( event ){
 		// console.log('map clicked');
+		// 暫定
 		this.cortiumService.putCortium( {
 			continent: this.selectedContinentId, 
 			lat: event.latlng.lat / 256,
@@ -47,19 +47,20 @@ class MapCtrl {
 	}
 	//-----------------------------------------------------------------------------------------
 	registerTileApi( api ){
-		this.tileApi = api;
 		// console.log('api registered');
+		this.tileApi = api;
 	}
 	//-----------------------------------------------------------------------------------------
 	changeContinent( continentId ){
 		this.selectedContinentId = continentId;
 		this.update();
-		this.urlTemplate = this.config.templateUrl( this.selectedContinentId );
-		this.tileApi.rebuildTile();
+		this.templateUrl = this.config.templateUrl( this.selectedContinentId );
+		this.tileApi.update();
 	}
 	//-----------------------------------------------------------------------------------------
 }
 
+// コンポーネント(ディレクティブの簡易版)の登録とコントローラの割り当て
 angular.module('map2App')
 .component('map', {
 	templateUrl: 'app/map/map.html',

@@ -23,7 +23,7 @@
 </mp-panel>
 <div class="col-md-10 max-height">
 	<mp-map on-click="$mapCtrl.onClickMap( event )">
-		<mp-tile url-template="$mapCtrl.urlTemplate" tile-size="256"  register-api="$mapCtrl.registerTileApi( api )"></mp-tile>
+		<mp-tile template-url="$mapCtrl.templateUrl" tile-size="256"  register-api="$mapCtrl.registerTileApi( api )"></mp-tile>
 		<mp-marker ng-repeat="marker in $mapCtrl.cortiums" lat="marker.lat" lng="marker.lng">
 	</mp-map>
 </div>

@@ -1,48 +1,62 @@
 'use strict';
 
-PS2MAP.directive('mpMarker', function() {
-	return {
-		require: '^^mpMap',
-		restrict: 'E',
-		scope: {
-			lat: '&',
-			lng: '&',
-			onMove: '&',
-			onClick: '&',
-		},
-		bindToController: true,
-		controllerAs: 'marker',
-		controller: [ '$scope' ,function( $scope ){
-			console.log('marker controller');
-			$scope.self = this;
-		} ],
-		link: function(scope, element, attr, ctrl) {
-			console.log('marker');
-			var self = scope.self;
-			// console.log('('+scope.lng()+', ' + scope.lng() +')');
-			self.marker = L.marker( [ self.lat(), self.lng() ], {
-				draggable: true
-			});
-			ctrl.addLayer( self.marker );
-	
-			// leafletのイベント変数を利用可能
-			self.marker.on( 'move', function( evt ) {
-				if( self.onMove ){
-					self.onMove( { 'event': evt } );
-				}
-			});
-	
-			self.marker.on( 'click', function( evt ) {
-				if( self.onClick ){
-					self.onClick( { 'event': evt } );
-				}
-			});
-			
-			element.on( '$destroy', function() {
-				ctrl.removeLayer( self.marker );
-			});
-		},
-	};
-});
+class MpMarkerCtrl {
+	constructor( $scope ){
+		// console.log('marker constructor');
+		// DI
+		MpMarkerCtrl.$inject = ['$scope'];
+		
+		// link
+		$scope.self = this;
 
+		this.marker = L.marker( [ this.lat(), this.lng() ], {
+			draggable: true
+		});
+		// leafletのイベント変数を利用可能
+		this.marker.on( 'move', function( evt ) {
+			if( this.onMove ){
+				this.onMove( { 'event': evt } );
+			}
+		});
 
+		this.marker.on( 'click', function( evt ) {
+			if( this.onClick ){
+				this.onClick( { 'event': evt } );
+			}
+		});
+	}
+	// --------------------------------------------------------------------------------------------
+	// directive definition
+	// --------------------------------------------------------------------------------------------
+	static ddo(){
+		console.log('DDO');
+		return {
+			require: '^^mpMap',
+			restrict: 'E',
+			scope: {
+				lat: '&',
+				lng: '&',
+				onMove: '&',
+				onClick: '&',
+			},
+			bindToController: true,
+			controllerAs: 'marker',
+			controller: MpMarkerCtrl,
+			compile: () => {
+				return {
+					pre: undefined,
+					post: MpMarkerCtrl.postLink,
+				};
+			}
+		};
+	}
+	static postLink( scope, element, attr, ctrl ) {
+		ctrl.addLayer( scope.self.marker );
+
+		element.on( '$destroy', function() {
+			ctrl.removeLayer( scope.self.marker );
+		});
+	}
+}
+
+PS2MAP.directive('mpMarker', MpMarkerCtrl.ddo);

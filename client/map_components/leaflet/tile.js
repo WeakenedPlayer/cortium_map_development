@@ -1,56 +1,60 @@
 'use strict';
 
-PS2MAP.directive('mpTile', function() {
-	return {
-	    require: '^^mpMap',
-		restrict: 'E',
-		transclude: true,
-		scope: {
-			urlTemplate: '&',
-			tileSize: '&',
-			rebuild: '&',
-			registerApi: '&',
-		},
-		bindToController: true,
-		controllerAs: 'tileCtrl',
-		//-----------------------------------------------------------------------------------------
-		controller: ['$scope', function($scope) {
-			// console.log('tile controller');
-			$scope.self = this;
-			var self = $scope.self;
-			// rebuild tile layer with new parameter
-			self.api = {
-				rebuildTile : function(){
-					// remove existing tile layer from map
-					if( self.tile ){
-						self.mapCtrl.removeLayer( self.tile );
-					}
-					console.log(self.urlTemplate());
-					self.tile = L.tileLayer( self.urlTemplate(), {
-						tileSize: self.tileSize(),
-						continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
-						minZoom: 1,
-						maxZoom: 7,
-						maxNativeZoom: 5,
-						noWrap: true,		
-					});
-					self.mapCtrl.addLayer( self.tile );
-				},
-			};
-			
-		}],
-		//-----------------------------------------------------------------------------------------
-		link: function( scope, elem, attr, ctrl) {
-			console.log('tile post link');
-			var self = scope.self;
-			self.mapElement = elem;
-			self.mapCtrl = ctrl;
-			self.api.rebuildTile();
-			console.log('api register');
-			self.registerApi( { 'api': self.api } );
-		},
-	};
-});
+class MpTileCtrl {
+	static ddo(){
+		return {
+		    require: '^^mpMap',
+			restrict: 'E',
+			transclude: true,
+			scope: {
+				templateUrl: '&',
+				tileSize: '&',
+				rebuild: '&',
+				registerApi: '&',
+			},
+			bindToController: true,
+			controllerAs: 'mpTileCtrl',
+			controller: MpTileCtrl,
+			link: MpTileCtrl.link, 
+		};
+	}
+	
+	static link( scope, elem, attr, ctrl) {
+		// console.log('tile post link');
+		var self = scope.self;
+		self.mapElement = elem;
+		self.mapCtrl = ctrl;
+		self.update();
+		self.registerApi( { 'api': self.api } );
+	}
+	
+	constructor( $scope ){
+		MpTileCtrl.$inject = ['$scope'];
+		$scope.self = this;
+		this.mapElement = undefined;
+		this.mapCtrl = undefined;
+		this.tile = undefined;
+		this.api = {
+			update: ()=>{ this.update(); },	// bind "this" to mpTileCtrl
+		};
+	}
+	
+	update(){
+		// remove existing tile layer from map
+		if( this.tile ){
+			this.mapCtrl.removeLayer( this.tile );
+		}
+		console.log(this.templateUrl);
+		this.tile = L.tileLayer( this.templateUrl(), {
+			tileSize: this.tileSize(),
+			continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776
+			minZoom: 1,
+			maxZoom: 7,
+			maxNativeZoom: 5,
+			noWrap: true,		
+		});
+		this.mapCtrl.addLayer( this.tile );
+	}
+}
 
-
-
+PS2MAP.directive('mpTile', MpTileCtrl.ddo);
