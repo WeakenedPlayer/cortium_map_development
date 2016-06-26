@@ -2,6 +2,7 @@
 
 class MpTileCtrl {
 	static ddo(){
+		console.log( 'tile.ddo' );
 		return {
 		    require: '^^mpMap',
 			restrict: 'E',
@@ -20,7 +21,7 @@ class MpTileCtrl {
 	}
 	
 	static link( scope, elem, attr, ctrl) {
-		// console.log('tile post link');
+		console.log('tile.postLink');
 		var self = scope.self;
 		self.mapElement = elem;
 		self.mapCtrl = ctrl;
@@ -44,7 +45,7 @@ class MpTileCtrl {
 		if( this.tile ){
 			this.mapCtrl.removeLayer( this.tile );
 		}
-		console.log(this.templateUrl);
+		// console.log(this.templateUrl);
 		this.tile = L.tileLayer( this.templateUrl(), {
 			tileSize: this.tileSize(),
 			continuousWorld: true, // バグ対策 :  https://github.com/Leaflet/Leaflet/issues/2776

@@ -2,7 +2,7 @@
 
 class MpMarkerCtrl {
 	constructor( $scope ){
-		// console.log('marker constructor');
+		console.log('marker.constructor');
 		// DI
 		MpMarkerCtrl.$inject = ['$scope'];
 		
@@ -29,7 +29,7 @@ class MpMarkerCtrl {
 	// directive definition
 	// --------------------------------------------------------------------------------------------
 	static ddo(){
-		console.log('DDO');
+		console.log('marker.ddo');
 		return {
 			require: '^^mpMap',
 			restrict: 'E',
@@ -51,8 +51,8 @@ class MpMarkerCtrl {
 		};
 	}
 	static postLink( scope, element, attr, ctrl ) {
+		console.log( 'marker.postLink' );
 		ctrl.addLayer( scope.self.marker );
-
 		element.on( '$destroy', function() {
 			ctrl.removeLayer( scope.self.marker );
 		});
